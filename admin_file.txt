@@ -1,0 +1,92 @@
+package myjavafx;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.*;
+import java.util.*;
+public class Admin {
+    private String admin_id;
+    private String admin_name;
+    
+    public String getAdmin_name() {
+        return admin_name;
+    }
+
+    public void setAdmin_name(String admin_name) {
+        this.admin_name = admin_name;
+    }
+
+    public ArrayList<Admin> getAdmin_list() {
+        return admin_list;
+    }
+
+    public void setAdmin_list(ArrayList<Admin> admin_list) {
+        this.admin_list = admin_list;
+    }
+    private String admin_password;
+    public boolean add_admin(String id,String name,String password) throws ClassNotFoundException, SQLException
+    {
+    	 SingleObjectDataBaseConnection single_con =SingleObjectDataBaseConnection.getInstance();
+    	 Connection con=single_con.getConnection();
+        Admin obj = new Admin();
+        if(!(id.matches("[0-9]+"))) {
+        	return false;
+        }
+        for(int i=0; i<admin_list.size(); i++)
+        {
+            if(id.equals(admin_list.get(i).getAdmin_id()))
+            {
+                return false;
+            }
+        }
+        obj.setAdmin_id(id);
+        obj.setAdmin_name(name);
+        obj.setAdmin_password(password);
+        admin_list.add(obj);
+        String storage = "insert into admin(ID,name,password)" + " values (?, ?, ?)";;
+        PreparedStatement preparedStmt = con.prepareStatement(storage);
+        preparedStmt.setString (1, id);
+        preparedStmt.setString(2, name);
+        preparedStmt.setString(3, password);
+        preparedStmt.execute();
+        con.close();
+        return true;
+    }
+  
+   
+   
+  
+
+   
+    protected ArrayList <Admin> admin_list = new ArrayList();
+    public String getAdmin_id() {
+        return admin_id;
+    }
+
+    public void setAdmin_id(String admin_id) {
+        this.admin_id = admin_id;
+    }
+
+    public String getAdmin_password() {
+        return admin_password;
+    }
+
+    public void setAdmin_password(String admin_Password) {
+        this.admin_password = admin_Password;
+    }
+    public boolean login_admin(String id, String password)
+    {
+        for(int i=0;i<admin_list.size();i++)
+        {
+            if(admin_list.get(i).getAdmin_id().equals(id))
+            {
+                if(admin_list.get(i).getAdmin_password().equals(password))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}

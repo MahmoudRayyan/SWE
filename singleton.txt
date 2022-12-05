@@ -1,0 +1,34 @@
+package myjavafx;
+import java.sql.*;
+import java.util.*;
+
+public class SingleObjectDataBaseConnection  {
+	private static SingleObjectDataBaseConnection single_obj;
+    private Connection connection;
+    private final String url = "jdbc:mysql://localhost:3306/mydata";
+    private final String username = "Admin";
+    private final String password = "68697";
+
+    private SingleObjectDataBaseConnection() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            this.connection = DriverManager.getConnection(url, username, password);
+        } catch (ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public static SingleObjectDataBaseConnection getInstance() throws SQLException {
+        if (single_obj == null) {
+        	single_obj = new SingleObjectDataBaseConnection();
+        } else if (single_obj.getConnection().isClosed()) {
+        	single_obj = new SingleObjectDataBaseConnection();
+        }
+
+        return single_obj;
+    }
+}
